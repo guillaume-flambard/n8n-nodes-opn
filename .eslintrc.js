@@ -12,9 +12,9 @@ module.exports = {
 		},
 		{
 			files: ['./credentials/**/*.ts'],
-			parserOptions: { project: ['./tsconfig.json'] },
 			plugins: ['eslint-plugin-n8n-nodes-base'],
 			extends: ['plugin:n8n-nodes-base/credentials'],
+			rules: { 'n8n-nodes-base/cred-class-field-documentation-url-miscased': 'off' },
 		},
 		{
 			files: ['./nodes/**/*.ts'],

@@ -66,11 +66,11 @@ describe('Opn node description', () => {
 		});
 	});
 
-	test('refund amount is optional and body-routed (empty = full refund)', () => {
+	test('refund amount is required and body-routed', () => {
 		const amount = props.find(
 			(p) => p.name === 'refundAmount' && p.displayOptions?.show?.resource?.includes('refund'),
 		);
-		expect(amount?.required).toBeUndefined();
+		expect(amount?.required).toBe(true);
 		expect(amount?.routing?.send).toEqual({ type: 'body', property: 'amount' });
 	});
 });

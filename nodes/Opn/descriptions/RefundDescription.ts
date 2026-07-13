@@ -33,9 +33,10 @@ export const refundFields: INodeProperties[] = [
 		displayName: 'Amount',
 		name: 'refundAmount',
 		type: 'number',
+		required: true,
 		default: 0,
 		description:
-			'Amount to refund in subunits. Leave 0/empty for a full refund. No conversion is applied.',
+			'Refund amount in subunits (smallest unit of the charge currency). 10000 = 100.00 THB. No conversion is applied.',
 		displayOptions: { show: { resource: ['refund'], operation: ['create'] } },
 		routing: { send: { type: 'body', property: 'amount' } },
 	},

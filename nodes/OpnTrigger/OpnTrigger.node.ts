@@ -28,7 +28,9 @@ export class OpnTrigger implements INodeType {
 		inputs: [],
 		outputs: ['main'],
 		credentials: [{ name: 'opnApi', required: true }],
-		webhooks: [{ name: 'default', httpMethod: 'POST', responseMode: 'onReceived', path: 'webhook' }],
+		webhooks: [
+			{ name: 'default', httpMethod: 'POST', responseMode: 'onReceived', path: 'webhook' },
+		],
 		properties: [
 			{
 				displayName:

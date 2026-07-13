@@ -1,5 +1,7 @@
 import type { INodeType, INodeTypeDescription } from 'n8n-workflow';
 import { chargeFields, chargeOperations } from './descriptions/ChargeDescription';
+import { customerFields, customerOperations } from './descriptions/CustomerDescription';
+import { refundFields, refundOperations } from './descriptions/RefundDescription';
 
 export class Opn implements INodeType {
 	description: INodeTypeDescription = {
@@ -33,6 +35,10 @@ export class Opn implements INodeType {
 			},
 			...chargeOperations,
 			...chargeFields,
+			...refundOperations,
+			...refundFields,
+			...customerOperations,
+			...customerFields,
 		],
 	};
 }

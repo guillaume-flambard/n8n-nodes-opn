@@ -50,4 +50,27 @@ describe('Opn node description', () => {
 		const currency = props.find((p) => p.name === 'currency');
 		expect(currency?.routing?.send).toEqual({ type: 'body', property: 'currency' });
 	});
+
+	test('refund create routes to nested charges endpoint', () => {
+		expect(routingOf('refund', 'create')).toEqual({
+			method: 'POST',
+			url: '=/charges/{{$parameter.chargeId}}/refunds',
+		});
+	});
+
+	test('customer operations route correctly', () => {
+		expect(routingOf('customer', 'create')).toEqual({ method: 'POST', url: '/customers' });
+		expect(routingOf('customer', 'get')).toEqual({
+			method: 'GET',
+			url: '=/customers/{{$parameter.customerId}}',
+		});
+	});
+
+	test('refund amount is optional and body-routed (empty = full refund)', () => {
+		const amount = props.find(
+			(p) => p.name === 'refundAmount' && p.displayOptions?.show?.resource?.includes('refund'),
+		);
+		expect(amount?.required).toBeUndefined();
+		expect(amount?.routing?.send).toEqual({ type: 'body', property: 'amount' });
+	});
 });

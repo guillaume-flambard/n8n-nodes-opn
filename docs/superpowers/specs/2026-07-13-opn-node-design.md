@@ -34,7 +34,7 @@ Resources → operations (v1, YAGNI):
 | Charge | Get | `GET /charges/{id}` |
 | Charge | Get Many | `GET /charges` (limit, offset, from/to) |
 | Charge | Capture | `POST /charges/{id}/capture` |
-| Refund | Create | `POST /charges/{chargeId}/refunds` (amount, metadata; full refund if amount empty) |
+| Refund | Create | `POST /charges/{chargeId}/refunds` (amount **required** in subunits — corrected 2026-07-13 against live Omise docs; original "full refund if empty" was wrong) |
 | Customer | Create | `POST /customers` (email, description, card token, metadata) |
 | Customer | Get | `GET /customers/{id}` |
 

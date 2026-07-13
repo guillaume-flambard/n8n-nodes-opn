@@ -1,0 +1,137 @@
+import type { INodeProperties } from 'n8n-workflow';
+
+export const chargeOperations: INodeProperties[] = [
+	{
+		displayName: 'Operation',
+		name: 'operation',
+		type: 'options',
+		noDataExpression: true,
+		displayOptions: { show: { resource: ['charge'] } },
+		default: 'create',
+		options: [
+			{
+				name: 'Create',
+				value: 'create',
+				action: 'Create a charge',
+				routing: { request: { method: 'POST', url: '/charges' } },
+			},
+			{
+				name: 'Get',
+				value: 'get',
+				action: 'Get a charge',
+				routing: { request: { method: 'GET', url: '=/charges/{{$parameter.chargeId}}' } },
+			},
+			{
+				name: 'Get Many',
+				value: 'getAll',
+				action: 'Get many charges',
+				routing: { request: { method: 'GET', url: '/charges' } },
+			},
+			{
+				name: 'Capture',
+				value: 'capture',
+				action: 'Capture an authorized charge',
+				routing: { request: { method: 'POST', url: '=/charges/{{$parameter.chargeId}}/capture' } },
+			},
+		],
+	},
+];
+
+export const chargeFields: INodeProperties[] = [
+	{
+		displayName: 'Amount',
+		name: 'amount',
+		type: 'number',
+		required: true,
+		default: 0,
+		description:
+			'Amount in subunits (e.g. satang for THB, cents for USD). 10000 = 100.00 THB. No conversion is applied.',
+		displayOptions: { show: { resource: ['charge'], operation: ['create'] } },
+		routing: { send: { type: 'body', property: 'amount' } },
+	},
+	{
+		displayName: 'Currency',
+		name: 'currency',
+		type: 'string',
+		required: true,
+		default: 'thb',
+		description: 'Three-letter ISO currency code, lowercase (thb, usd, jpy, sgd, …)',
+		displayOptions: { show: { resource: ['charge'], operation: ['create'] } },
+		routing: { send: { type: 'body', property: 'currency' } },
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		displayOptions: { show: { resource: ['charge'], operation: ['create'] } },
+		options: [
+			{
+				displayName: 'Capture',
+				name: 'capture',
+				type: 'boolean',
+				default: true,
+				description: 'Whether to capture immediately (false = authorize only)',
+				routing: { send: { type: 'body', property: 'capture' } },
+			},
+			{
+				displayName: 'Card Token',
+				name: 'card',
+				type: 'string',
+				default: '',
+				description: 'Card token (tokn_…) from Opn.js client-side tokenization',
+				routing: { send: { type: 'body', property: 'card' } },
+			},
+			{
+				displayName: 'Customer ID',
+				name: 'customer',
+				type: 'string',
+				default: '',
+				routing: { send: { type: 'body', property: 'customer' } },
+			},
+			{
+				displayName: 'Description',
+				name: 'description',
+				type: 'string',
+				default: '',
+				routing: { send: { type: 'body', property: 'description' } },
+			},
+			{
+				displayName: 'Source ID',
+				name: 'source',
+				type: 'string',
+				default: '',
+				description: 'Payment source (src_…) for non-card payments (PromptPay, TrueMoney, …)',
+				routing: { send: { type: 'body', property: 'source' } },
+			},
+		],
+	},
+	{
+		displayName: 'Charge ID',
+		name: 'chargeId',
+		type: 'string',
+		required: true,
+		default: '',
+		description: 'Charge ID (chrg_…)',
+		displayOptions: { show: { resource: ['charge'], operation: ['get', 'capture'] } },
+	},
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		default: 50,
+		typeOptions: { minValue: 1 },
+		description: 'Max number of results to return',
+		displayOptions: { show: { resource: ['charge'], operation: ['getAll'] } },
+		routing: { send: { type: 'query', property: 'limit' } },
+	},
+	{
+		displayName: 'Offset',
+		name: 'offset',
+		type: 'number',
+		default: 0,
+		displayOptions: { show: { resource: ['charge'], operation: ['getAll'] } },
+		routing: { send: { type: 'query', property: 'offset' } },
+	},
+];

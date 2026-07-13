@@ -1,0 +1,39 @@
+{
+  "name": "n8n-nodes-opn",
+  "version": "0.1.0",
+  "description": "n8n community node for Opn Payments (formerly Omise) — charges, refunds, customers, webhook trigger",
+  "keywords": ["n8n-community-node-package", "n8n", "omise", "opn", "payments", "thailand"],
+  "license": "MIT",
+  "homepage": "https://github.com/guillaume-flambard/n8n-nodes-opn",
+  "author": { "name": "Guillaume Flambard", "email": "g.flambard@gmail.com" },
+  "repository": { "type": "git", "url": "https://github.com/guillaume-flambard/n8n-nodes-opn.git" },
+  "engines": { "node": ">=18.10" },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "test": "jest"
+  },
+  "files": ["dist"],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": ["dist/credentials/OpnApi.credentials.js"],
+    "nodes": ["dist/nodes/Opn/Opn.node.js", "dist/nodes/OpnTrigger/OpnTrigger.node.js"]
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "gulp": "^4.0.2",
+    "jest": "^29.7.0",
+    "n8n-workflow": "*",
+    "prettier": "^3.3.2",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.5.3"
+  },
+  "peerDependencies": { "n8n-workflow": "*" }
+}

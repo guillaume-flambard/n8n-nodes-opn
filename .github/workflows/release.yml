@@ -4,6 +4,17 @@ name: Release
 # community node publie depuis une machine locale : la 0.1.0 est partie comme ca
 # et n'a pas d'attestations sur le registre.
 #
+# Authentification par trusted publishing (OIDC), donc aucun token stocke.
+# A configurer une fois sur npmjs.com, page du package, Settings, Trusted Publisher :
+#   provider = GitHub Actions
+#   organization/user = guillaume-flambard
+#   repository        = n8n-nodes-opn
+#   workflow filename = release.yml
+#
+# Pourquoi pas un NPM_TOKEN : npm restreint les tokens qui contournent la 2FA
+# (comptes en aout 2026, publication directe en janvier 2027), et un token sans
+# bypass echoue en CI faute de quelqu'un pour saisir l'OTP.
+#
 # Declenchement : pousser un tag de version.
 #   npm version patch && git push --follow-tags
 
@@ -29,6 +40,10 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
+      # Node 22 embarque npm 10, et le trusted publishing par OIDC demande
+      # npm 11.5.1 au minimum.
+      - run: npm install -g npm@latest
+
       # Meme raison que dans ci.yml : isolated-vm est une devDep transitive au
       # build natif capricieux, et aucun script n'est necessaire ici.
       - run: npm ci --ignore-scripts
@@ -40,7 +55,10 @@ jobs:
       # doit tourner avant publish sinon le tarball part vide.
       - run: npm run build
 
+      # Uniquement sur un tag : en workflow_dispatch, GITHUB_REF_NAME vaut le nom
+      # de branche et la comparaison echouerait toujours.
       - name: Verifier que le tag correspond a la version du package
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           TAG="${GITHUB_REF_NAME#v}"
           PKG="$(node -p "require('./package.json').version")"
@@ -49,6 +67,5 @@ jobs:
             exit 1
           fi
 
+      # Pas de NODE_AUTH_TOKEN : l'authentification passe par l'OIDC ci-dessus.
       - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

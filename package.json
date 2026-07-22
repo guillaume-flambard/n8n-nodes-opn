@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-opn",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n community node for Opn Payments (formerly Omise) — charges, refunds, customers, webhook trigger",
   "keywords": ["n8n-community-node-package", "n8n", "omise", "opn", "payments", "thailand"],
   "license": "MIT",

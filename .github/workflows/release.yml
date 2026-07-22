@@ -1,0 +1,54 @@
+name: Release
+
+# Publie sur npm avec une declaration de provenance. n8n refuse de verifier un
+# community node publie depuis une machine locale : la 0.1.0 est partie comme ca
+# et n'a pas d'attestations sur le registre.
+#
+# Declenchement : pousser un tag de version.
+#   npm version patch && git push --follow-tags
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      # Sans id-token: write, npm ne peut pas signer la provenance et
+      # --provenance echoue.
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      # Meme raison que dans ci.yml : isolated-vm est une devDep transitive au
+      # build natif capricieux, et aucun script n'est necessaire ici.
+      - run: npm ci --ignore-scripts
+
+      - run: npm run lint
+      - run: npm test
+
+      # dist n'est pas versionne et `files` ne publie que dist, donc le build
+      # doit tourner avant publish sinon le tarball part vide.
+      - run: npm run build
+
+      - name: Verifier que le tag correspond a la version du package
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "Tag $TAG et package.json $PKG divergent."
+            exit 1
+          fi
+
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
